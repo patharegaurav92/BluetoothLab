@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Bluetooth Assignment</string>
+    <string name="action_settings">Settings</string>
+    <string name="Text">Status: -</string>
+    <string name="on">Turn On</string>
+    <string name="off">Turn Off</string>
+    <string name="List">List paired Devices</string>
+    <string name="Find">Search new Devices / Cancel</string>
+    <string name="title_activity_main">Bluetooth/Wifi Assignment</string>
+    <string name="title_activity_send_amessage">Send A Message</string>
+    <string name="title_activity_send_an_image">Send An Image</string>
+    <string name="title_activity_send_arecording">Send A Recording</string>
+    <string name="title_activity_wifi_direct">WifiDirectActivity</string>
+    <string name="discover_peer">Discover Peer</string>
+</resources>

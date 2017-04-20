@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context="edu.student.android.bluetoothlab.MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout2">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/sendMessage"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:text="Send Message"
+        android:layout_above="@+id/sendAnImage"
+        android:layout_alignStart="@+id/sendAnImage" />
+
+    <Button
+        android:id="@+id/sendAnImage"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:text="Send an Image"
+        android:layout_above="@+id/sendARecording"
+        android:layout_alignStart="@+id/sendARecording" />
+
+    <Button
+        android:id="@+id/sendARecording"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:text="Send A Recording"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="15dp"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/bluetooth_connect"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/sendMessage"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_marginTop="86dp"
+        android:text="Connect Bluetooth" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="197dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_horizontal"
+        android:text="Connected/Disconnected"
+        android:layout_above="@+id/wifi_connect"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/wifi_connect"
+        android:layout_width="145dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/bluetooth_connect"
+        android:layout_below="@+id/bluetooth_connect"
+        android:text="Connect WifiDirect" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="197dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:text="Connect a Device"
+        android:layout_alignBottom="@+id/wifi_connect"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp" />
+</RelativeLayout>
