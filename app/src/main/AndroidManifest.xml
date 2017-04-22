@@ -43,11 +43,16 @@
             android:label="@string/title_activity_send_an_image" />
         <activity
             android:name=".SendARecording"
-            android:label="@string/title_activity_send_arecording"></activity>
+            android:label="@string/title_activity_send_arecording" />
         <activity
             android:name=".WifiDirectActivity"
-            android:label="@string/title_activity_wifi_direct"
-            ></activity>
+            android:label="@string/title_activity_wifi_direct" />
+        <activity
+            android:name=".SendAMessageWifi"
+            android:label="@string/title_activity_send_amessage_wifi"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".SendAnImageWifi" />
+        <activity android:name=".SendARecordingWifi"></activity>
     </application>
 
 </manifest>

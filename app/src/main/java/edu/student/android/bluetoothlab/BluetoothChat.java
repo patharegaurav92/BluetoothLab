@@ -153,7 +153,6 @@ public class BluetoothChat extends AppCompatActivity  {
             }
             else{
                 on();
-                start();
             }
         }
     }
@@ -175,10 +174,18 @@ public class BluetoothChat extends AppCompatActivity  {
     public synchronized void connected(BluetoothSocket socket,BluetoothDevice device){
         Log.d(TAG, "connected");
 
+            if (mConnectThread != null) {
+                mConnectThread.cancel();
+                mConnectThread = null;
+            }
+        if(mSecureAcceptThread !=null){
+            mSecureAcceptThread.cancel();
+            mSecureAcceptThread = null;
+        }
+
        /*mConnectedThread = new ConnectedThread(socket);
         mConnectedThread.start();*/
         Intent go = new Intent(BluetoothChat.this,MainActivity.class);
-        socket = socket;
         SocketAndDevice.device = device;
         SocketAndDevice.socket = socket;
         setResult(Activity.RESULT_OK,go);
@@ -211,7 +218,7 @@ public class BluetoothChat extends AppCompatActivity  {
         if(requestCode == REQUEST_ENABLE_BT){
             if(myBluetoothAdapter.isEnabled()) {
                 text.setText("Status: Enabled");
-
+                start();
             } else {
                 text.setText("Status: Disabled");
             }

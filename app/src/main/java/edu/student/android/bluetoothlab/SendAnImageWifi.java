@@ -2,52 +2,39 @@ package edu.student.android.bluetoothlab;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-import static android.R.attr.data;
-import static android.R.attr.port;
-import static android.R.attr.value;
-import static edu.student.android.bluetoothlab.SocketAndDevice.socket;
+import static android.os.Build.VERSION.SDK_INT;
+import static edu.student.android.bluetoothlab.R.id.statusOfImage;
 
-public class SendAnImage extends AppCompatActivity {
+public class SendAnImageWifi extends AppCompatActivity {
     private ImageView imageView;
     private Button sendButton,attachButton;
-    private final static String TAG = "SendAnImage";
-    private final int REQUEST_CODE = 101;
+    private TextView statusOfImage;
+    private final int REQUEST_CODE = 102;
     private  byte[] byteArray;
-    private byte[] byteArrayWifi;
+    private final static String TAG = "SendAnImageWifi";
     private ConnectedThread mConnectedThread;
     private int mState;
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -58,34 +45,34 @@ public class SendAnImage extends AppCompatActivity {
     private byte[] readB =null;
     private int sentState;
     byte[] result=new byte[0];
-    private TextView statusOfImage;
-    String whichConnection;
-    private static final int SOCKET_TIMEOUT = 5000;
-    public static final String ACTION_SEND_FILE = "com.example.android.wifidirect.SEND_FILE";
-    public static final String EXTRAS_FILE_PATH = "file_url";
-    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
-    public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
-    public static Uri imageUri1;
-    String filePath,host;
-         static   int  port;
+    private Socket socket;
+    public int port = 8008;
+    private static final int SOCKET_TIMEOUT = 60000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_send_an_image);
+        setContentView(R.layout.activity_send_an_image_wifi);
         Log.v(TAG, "onCreate");
-
-        setUpUiButtonsAndListeners();
-
+        if (SDK_INT > 8)
+        {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            //your codes here
+            socket = Data.socket;
+            setUpUiButtonsAndListeners();
             mConnectedThread = new ConnectedThread(socket);
             mConnectedThread.start();
+
+        }
 
 
     }
     public void setUpUiButtonsAndListeners(){
-        imageView = (ImageView) findViewById(R.id.imageView);
-        sendButton = (Button) findViewById(R.id.send);
-        attachButton = (Button) findViewById(R.id.attach);
-        statusOfImage = (TextView) findViewById(R.id.statusOfImage);
+        imageView = (ImageView) findViewById(R.id.imageView5);
+        sendButton = (Button) findViewById(R.id.send1);
+        attachButton = (Button) findViewById(R.id.attach1);
+        statusOfImage = (TextView) findViewById(R.id.statusOfImage1);
         statusOfImage.setVisibility(View.GONE);
 
         attachButton.setOnClickListener(new View.OnClickListener() {
@@ -102,19 +89,15 @@ public class SendAnImage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                    Log.v(TAG, "Send Button");
-                    if (byteArray.length > 0) {
-                        write(byteArray);
-                    }
+                Log.v(TAG, "Send Button");
+                if (byteArray.length > 0) {
+                    write(byteArray);
+                }
 
             }
         });
 
     }
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -125,13 +108,13 @@ public class SendAnImage extends AppCompatActivity {
                     if (resultCode == Activity.RESULT_OK) {
                         Log.v(TAG, "Result OK");
 
-                            Log.v(TAG,"Bluetooth Connection- SendAnImage - onActivityResult");
-                            final Uri imageUri = data.getData();
-                            final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                            imageView.setImageBitmap(selectedImage);
-                            byteArray = readBytes(imageUri);
-                             Log.v(TAG,"No of Bytes: "+byteArray.length);
+                        Log.v(TAG,"Bluetooth Connection- SendAnImage - onActivityResult");
+                        final Uri imageUri = data.getData();
+                        final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        imageView.setImageBitmap(selectedImage);
+                        byteArray = readBytes(imageUri);
+                        Log.v(TAG,"No of Bytes: "+byteArray.length);
 
 
                         break;
@@ -144,16 +127,6 @@ public class SendAnImage extends AppCompatActivity {
             Log.e(TAG, "Exception in onActivityResult : " + e.getMessage());
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mConnectedThread != null) {
-            mConnectedThread.cancel();
-            mConnectedThread = null;
-        }
-    }
-
     public byte[] readBytes(Uri uri) throws IOException {
         // this dynamically extends to take the bytes you read
         InputStream inputStream = getContentResolver().openInputStream(uri);
@@ -172,7 +145,6 @@ public class SendAnImage extends AppCompatActivity {
         // and then we can return your byte array.
         return byteBuffer.toByteArray();
     }
-
     public void write(byte[] out) {
         // Create temporary object
         ConnectedThread r;
@@ -184,12 +156,12 @@ public class SendAnImage extends AppCompatActivity {
         r.write(out);
     }
     private class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private final Socket mmSocket;
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
         // private byte[] mmBuffer; // mmBuffer store for the stream
 
-        public  ConnectedThread(BluetoothSocket socket) {
+        public  ConnectedThread(Socket socket) {
             mmSocket = socket;
             InputStream tmpIn = null;
             OutputStream tmpOut = null;
@@ -213,7 +185,7 @@ public class SendAnImage extends AppCompatActivity {
         }
 
         public void run() {
-           // byte[] buffer = new byte[1024];
+            // byte[] buffer = new byte[1024];
             byte[] b=null; /// bytes returned from read()
             byte[] buffer = new byte[1024];
             int numBytes;
@@ -270,18 +242,18 @@ public class SendAnImage extends AppCompatActivity {
                     });
                     b = out.toByteArray();
                     Log.v(TAG, "run- while - ConnectThread | Bytes array: " + b.length);
-                                Message readMsg = mHandler.obtainMessage(
-                                        Constants.MESSAGE_READ, -1, -1,
-                                        b);
-                                readMsg.sendToTarget();
+                    Message readMsg = mHandler.obtainMessage(
+                            Constants.MESSAGE_READ, -1, -1,
+                            b);
+                    readMsg.sendToTarget();
 
 
-                           // Log.v(TAG, "run- while - ConnectThread | Total No of Bytes: " + numBytes);
+                    // Log.v(TAG, "run- while - ConnectThread | Total No of Bytes: " + numBytes);
 
 
 
                     sentState = STATE_SENT;
-                   // Log.v(TAG,"run- while - ConnectThread | Total No of Bytes: "+numBytes);
+                    // Log.v(TAG,"run- while - ConnectThread | Total No of Bytes: "+numBytes);
                     // Send the obtained bytes to the UI activity.
                 } catch (IOException e) {
                     Log.d(TAG, "Input stream was disconnected", e);
@@ -333,7 +305,6 @@ public class SendAnImage extends AppCompatActivity {
             }
         }
     }
-
     private void byteToImage() {
 
         Bitmap bitmap = BitmapFactory.decodeByteArray(result, 0,
@@ -341,7 +312,6 @@ public class SendAnImage extends AppCompatActivity {
         imageView.setImageBitmap(bitmap);
 
     }
-
     byte[] concatenateByteArrays(byte[] a, byte[] b) {
         byte[] result = new byte[a.length + b.length];
         System.arraycopy(a, 0, result, 0, a.length);

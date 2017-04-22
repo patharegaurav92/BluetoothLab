@@ -14,4 +14,5 @@
     <string name="title_activity_send_arecording">Send A Recording</string>
     <string name="title_activity_wifi_direct">WifiDirectActivity</string>
     <string name="discover_peer">Discover Peer</string>
+    <string name="title_activity_send_amessage_wifi">SendAMessageWifi</string>
 </resources>
